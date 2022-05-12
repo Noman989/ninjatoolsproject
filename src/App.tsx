@@ -18,9 +18,8 @@ declare global {
   }
 }
 
-if (typeof window.gun !== 'undefined') {
-  window.gun = gun;
-}
+window.gun = gun;
+
 
 interface NavButtonProps {
   children: string;

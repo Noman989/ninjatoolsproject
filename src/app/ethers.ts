@@ -11,7 +11,7 @@ const getProvider = (chain: "mainnet" | "ropsten") => {
 const ERC721_ABI = [
   "function name() view returns (string)",
   "function symbol() view returns (string)",
-  "function mintItem(address minter, string memory tokenURI, uint nft_price) public onlyOwner returns (uint256)",
+  "function mintItem(string memory tokenURI, uint nft_price) public onlyOwner returns (uint256)",
   "function balanceOf(address owner) external view returns (uint256 balance)",
   "function getNFTS(address owner) public view returns (uint256[] memory)",
   "function tokenURI(uint256 tokenId) external view returns (string memory)",
@@ -19,7 +19,7 @@ const ERC721_ABI = [
   "function buy(uint256 tokenId) public payable",
 ];
 
-const CONTRACT_ADDRESS = "0x039e184dB467Cb8Dc08FE685Ff4A014A17E550CC";
+const CONTRACT_ADDRESS = "0x2e0CD3c1A72B83a22C285c03aff1719Faa11883d";
 
 const getContractInfo = async () => {
   const provider = getProvider("ropsten");
@@ -49,7 +49,6 @@ const mintItem = async (
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ERC721_ABI, signer);
 
     const id = await contract.mintItem(
-      minter,
       tokenURI,
       ethers.utils.parseEther(nft_price)
     );
@@ -111,11 +110,13 @@ const buyNFT = async (tokenID: number, price: `${number}`) => {
     const signer = provider.getSigner();
 
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ERC721_ABI, signer);
-    // const tx = await contract.estimateGas.buy(tokenID);
-    // console.log("ESTIMATE GAS ", tx);
+    const txEstimate = await contract.estimateGas.buy(tokenID, {value: utils.parseEther(price)});
+    console.log(txEstimate.toString());
+
     const tx = await contract.buy(tokenID, {
-      gasPrice: utils.parseUnits("1000", "gwei"),
-      gasLimit: "100000",
+      // gasPrice: utils.parseUnits("280", "gwei"),
+      gasPrice: txEstimate.toString(),
+      gasLimit: "200000",
       value: utils.parseEther(price),
     });
     return tx;

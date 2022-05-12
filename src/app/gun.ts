@@ -1,6 +1,6 @@
 import Gun from "gun";
 
-export const gun = new Gun(["http://localhost:8765/gun"]);
+export const gun = new Gun(["https://ninjatoolsbackend.herokuapp.com:12981/"]);
 
 export const addToMarket = (
   setIsOnMarket: React.Dispatch<React.SetStateAction<boolean>>,
